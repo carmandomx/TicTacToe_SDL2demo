@@ -4,6 +4,8 @@
 #include "Logger.h"
 #include "defs.h"
 
+#define STRING const char*
+
 class Game
 {
 public:
