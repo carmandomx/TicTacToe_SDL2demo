@@ -1,7 +1,8 @@
 #include "Game.h"
 #include <iostream>
+#include "TextureManager.h"
 
-SDL_Rect dst;
+
 void Game::init(bool fs)
 {
 	int flags = 0;
@@ -26,6 +27,10 @@ void Game::init(bool fs)
 			std::cout << "Renderer up and running" << std::endl;
 		}
 		isRunning = true;
+		_TextureManager::Instance()->load("playerX", "assets/playerX.png", renderer);
+		_TextureManager::Instance()->load("playerO", "assets/playerO.png", renderer);
+		_TextureManager::Instance()->load("tileSet1", "assets/bgSetOne.png", renderer);
+
 	}
 	else
 	{
@@ -43,12 +48,10 @@ void Game::init(bool fs)
 
 void Game::update()
 {
-	 counter++;
-	 std::cout << counter << std::endl;
+	 // counter++;
+	 // std::cout << counter << std::endl;
 
-	dst.w = 32;
-	dst.h = 32;
-	dst.x = counter;
+
 }
 
 void Game::handleEvents()
@@ -56,42 +59,39 @@ void Game::handleEvents()
 
 	SDL_Event ev;
 
-	SDL_PollEvent(&ev);
+	while (SDL_PollEvent(&ev)) {
+		switch (ev.type)
+		{
+		case SDL_QUIT:
+		
+			isRunning = false;
+			break;
+		
 
-	switch (ev.type)
-	{
-	case SDL_QUIT:
-		isRunning = false;
-		break;
 
-	default:
-		break;
+		default:
+			break;
+		}
 	}
+
+	
 
 }
 
 void Game::render()
 {
-	SDL_Texture *tex = nullptr;
+	
 	SDL_RenderClear(renderer);
 	// Render logic starts
-	tex = IMG_LoadTexture(renderer, "./assets/playerO.png");
-	if (tex == NULL) {
-		std::cout << SDL_GetError() << std::endl;
-	}
-
-
-
-
-	SDL_RenderCopy(renderer, tex, NULL, &dst);
-	
+	_TextureManager::Instance()->genBoard(renderer);
 
 	// Render logic ends
 	SDL_RenderPresent(renderer);
 }
 
 void Game::clean()
-{
+{	
+	_TextureManager::Instance()->clean();
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
